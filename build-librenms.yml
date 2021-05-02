@@ -1,0 +1,269 @@
+- name: Build LibreNMS
+  hosts: localhost
+  connection: local
+
+  vars:
+    timezone: "America/New_York"
+    database_password: "qJAYHES4W3Wq24KobMNMpjHKmQaJ90S1"
+    hostname: "librenms-ttl.iu13.net"
+
+  tasks:
+  - name: Update package repositories cache
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  
+  - name: Install packages (1)
+    apt:
+      pkg:
+      - software-properties-common
+
+  - name: Update all packages to their latest version
+    apt:
+      name: "*"
+      state: latest
+  
+  - name: Add universe repository into sources list
+    shell: add-apt-repository universe
+    changed_when: false
+ 
+  - name: Install packages (2)
+    apt:
+      update_cache: yes
+      pkg:
+      - software-properties-common
+      - acl 
+      - curl
+      - composer 
+      - fping 
+      - git 
+      - graphviz 
+      - imagemagick 
+      - mariadb-client 
+      - mariadb-server 
+      - mtr-tiny 
+      - nginx-full 
+      - nmap 
+      - php7.4-cli 
+      - php7.4-curl 
+      - php7.4-fpm 
+      - php7.4-gd 
+      - php7.4-json 
+      - php7.4-mbstring 
+      - php7.4-mysql 
+      - php7.4-snmp 
+      - php7.4-xml 
+      - php7.4-zip 
+      - rrdtool 
+      - snmp 
+      - snmpd 
+      - whois 
+      - unzip 
+      - python3-pymysql 
+      - python3-dotenv 
+      - python3-redis 
+      - python3-setuptools 
+      - python3-systemd
+      
+  - name: Create librenms user
+    user:
+      name: librenms
+      home: /opt/librenms
+      create_home: false
+      system: yes
+      shell: /usr/bin/bash
+
+  - name: Clone git repo
+    git:
+      repo: https://github.com/librenms/librenms.git
+      dest: /opt/librenms/
+      force: yes
+   
+  - name: Set permissions (1)
+    file:
+      path: /opt/librenms
+      owner: librenms
+      group: librenms
+      state: directory
+      recurse: yes
+  
+  - name: Set permissions (2)
+    file:
+      path: /opt/librenms
+      owner: librenms
+      group: librenms
+      state: directory
+      recurse: no
+      mode: '0771'
+  
+  - name: Set permissions (3)
+    shell: setfacl -d -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+
+  - name: Set permissions (4)
+    shell: setfacl -R -m g::rwx /opt/librenms/rrd /opt/librenms/logs /opt/librenms/bootstrap/cache/ /opt/librenms/storage/
+   
+  - name: Install PHP dependencies
+    shell: ./scripts/composer_wrapper.php install --no-dev
+    args:
+      chdir: /opt/librenms
+    become: yes
+    become_user: librenms
+    
+  - name: Set system timezone
+    shell: timedatectl set-timezone {{ timezone }}
+
+  - name: Set date.timezone for CLI
+    lineinfile:
+      dest: /etc/php/7.4/cli/php.ini
+      regexp: "date.timezone ="
+      line: "date.timezone = {{ timezone }}"
+
+  - name: Set date.timezone for FPM
+    lineinfile:
+      dest: /etc/php/7.4/fpm/php.ini
+      regexp: "date.timezone ="
+      line: "date.timezone = {{ timezone }}"
+
+  - name: Configure MariaDB (1/2)
+    lineinfile:
+      dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+      insertafter: '^\[mysqld\]'
+      line: "innodb_file_per_table=1"
+
+  - name: Configure MariaDB (2/2)
+    lineinfile:
+      dest: /etc/mysql/mariadb.conf.d/50-server.cnf
+      insertafter: '^\[mysqld\]'
+      line: "lower_case_table_names=0"
+
+  - name: Start MariaDB
+    systemd:
+      name: mariadb
+      state: restarted
+      enabled: yes
+
+  - name: Create database
+    community.mysql.mysql_db:
+      name: librenms
+      state: present
+      collation: utf8mb4_unicode_ci
+      encoding: utf8mb4
+      check_implicit_admin: yes
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Create database user
+    community.mysql.mysql_user:
+      name: librenms
+      password: "{{ database_password }}"
+      priv: 'librenms.*:ALL'
+      state: present
+      check_implicit_admin: yes
+      login_unix_socket: /var/run/mysqld/mysqld.sock
+
+  - name: Configure PHP-FPM (1)
+    command: mv /etc/php/7.4/fpm/pool.d/www.conf /etc/php/7.4/fpm/pool.d/www.conf-disabled
+    args:
+      creates: /etc/php/7.4/fpm/pool.d/www.conf-disabled
+
+  - name: Configure PHP-FPM (2)
+    copy:
+      src: /etc/php/7.4/fpm/pool.d/www.conf-disabled
+      dest: /etc/php/7.4/fpm/pool.d/librenms.conf
+      remote_src: yes
+
+  - name: Configure PHP-FPM (3)
+    lineinfile:
+      dest: /etc/php/7.4/fpm/pool.d/librenms.conf
+      regexp: '^\[www\]'
+      line: "[librenms]"
+
+  - name: Configure PHP-FPM (4)
+    lineinfile:
+      dest: /etc/php/7.4/fpm/pool.d/librenms.conf
+      regexp: '^user ='
+      line: "user = librenms"
+
+  - name: Configure PHP-FPM (5)
+    lineinfile:
+      dest: /etc/php/7.4/fpm/pool.d/librenms.conf
+      regexp: '^group ='
+      line: "group = librenms"
+
+  - name: Configure PHP-FPM (6)
+    lineinfile:
+      dest: /etc/php/7.4/fpm/pool.d/librenms.conf
+      regexp: '^listen ='
+      line: "listen = /run/php-fpm-librenms.sock"
+
+  - name: Configure PHP-FPM (7)
+    file:
+      path: /etc/php/7.4/fpm/pool.d/www.conf
+      state: absent
+  
+  - name: Configure nginx (1)
+    blockinfile:
+      path: /etc/nginx/conf.d/librenms.conf
+      create: yes
+      block: |
+        server {
+         listen      80;
+         server_name {{ hostname }};
+         root        /opt/librenms/html;
+         index       index.php;
+        
+         charset utf-8;
+         gzip on;
+         gzip_types text/css application/javascript text/javascript application/x-javascript image/svg+xml text/plain text/xsd text/xsl text/xml image/x-icon;
+         location / {
+          try_files $uri $uri/ /index.php?$query_string;
+         }
+         location ~ [^/]\.php(/|$) {
+          fastcgi_pass unix:/run/php-fpm-librenms.sock;
+          fastcgi_split_path_info ^(.+\.php)(/.+)$;
+          include fastcgi.conf;
+         }
+         location ~ /\.(?!well-known).* {
+          deny all;
+         }
+        }
+        
+  - name: Configure nginx (2)
+    file:
+      path: /etc/nginx/sites-enabled/default
+      state: absent
+  
+  - name: Start nginx
+    systemd:
+      name: nginx
+      state: restarted
+      enabled: yes
+
+  - name: Start php7.4-fpm
+    systemd:
+      name: php7.4-fpm
+      state: restarted
+      enabled: yes
+
+  - name: Configure lnms (1)
+    file:
+      src: /opt/librenms/lnms
+      dest: /usr/bin/lnms
+      state: link
+
+  - name: Configure lnms (2)
+    copy:
+      src: /opt/librenms/misc/lnms-completion.bash
+      dest: /etc/bash_completion.d/lnms-completion.bash
+      remote_src: yes
+
+  - name: Configure cron
+    copy:
+      src: /opt/librenms/librenms.nonroot.cron
+      dest: /etc/cron.d/librenms
+      remote_src: yes
+
+  - name: Configure logrotate
+    copy:
+      src: /opt/librenms/misc/librenms.logrotate
+      dest: /etc/logrotate.d/librenms
+      remote_src: yes
