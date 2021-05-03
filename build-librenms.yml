@@ -54,6 +54,7 @@
       - php7.4-snmp 
       - php7.4-xml 
       - php7.4-zip 
+      - php-pear
       - rrdtool 
       - snmp 
       - snmpd 
@@ -73,12 +74,18 @@
       system: yes
       shell: /usr/bin/bash
 
-  - name: Clone git repo
+  - name: Clone git repo (LibreNMS)
     git:
       repo: https://github.com/librenms/librenms.git
       dest: /opt/librenms/
       force: yes
-   
+
+  - name: Clone git repo (Weathermap)
+    git:
+      repo: https://github.com/librenms-plugins/Weathermap.git
+      dest: /opt/librenms/html/plugins/Weathermap/
+      force: yes
+
   - name: Set permissions (1)
     file:
       path: /opt/librenms
@@ -256,11 +263,16 @@
       dest: /etc/bash_completion.d/lnms-completion.bash
       remote_src: yes
 
-  - name: Configure cron
+  - name: Configure cron (1)
     copy:
       src: /opt/librenms/librenms.nonroot.cron
       dest: /etc/cron.d/librenms
       remote_src: yes
+
+  - name: Configure cron (2)
+    lineinfile:
+      dest: /etc/cron.d/librenms
+      line: "* * * * * librenms /opt/librenms/html/plugins/Weathermap/map-poller.php >> /dev/null 2>&1"
 
   - name: Configure logrotate
     copy:
