@@ -1,5 +1,6 @@
 # TTL LibreNMS Demo
 Ubuntu 20.04.2 Server LTS - Download https://bit.ly/331iR4P
+LibreNMS Docs - https://docs.librenms.org/
 
 Install Ubuntu:
  - configure static IP / IPv6
