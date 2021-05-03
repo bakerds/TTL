@@ -1,8 +1,6 @@
 # TTL LibreNMS Demo
 Ubuntu 20.04.2 Server LTS - Download https://bit.ly/331iR4P
 
-LibreNMS Docs - https://docs.librenms.org/
-
 Install Ubuntu:
  - configure static IP / IPv6
  - when creating your user, do not use the username "librenms"
@@ -39,3 +37,7 @@ Configuration checklist:
 - Authorization > Device Group Settings -- enable if you need RBAC
 - System > Updates > Set update Channel: release (monthly cadence vs nightly)
 - Web UI > Graph Settings > Enable dynamic graphs: true
+
+# Helpful links
+- LibreNMS Docs - https://docs.librenms.org/
+
