@@ -40,4 +40,4 @@ Configuration checklist:
 
 # Helpful links
 - LibreNMS Docs - https://docs.librenms.org/
-
+- Oxidized guide - https://docs.librenms.org/Extensions/Oxidized/
