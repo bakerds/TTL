@@ -36,35 +36,30 @@ EVPN-VXLAN is most often found in the datacenter, where it can help solve proble
 
 **Pros**
 
-- Convenience: shared control plane makes configuration easy
-- Convenience: link aggregation across multiple switches is easy
-- Scalability: it's usually easy to add switches to a stack
+- **Convenience**: shared control plane makes configuration easy
+- **Convenience**: link aggregation across multiple switches is easy
+- **Scalability**: it's usually easy to add switches to a stack
 
 **Cons**
 
-- Reliability: if the master switch experiences a control plane fault, the whole stack usually experiences a fault
-- Maintenance: software upgrades usually require downtime for a full stack reboot
-- Scalability: there's usually a limit of 8-12 switches in a stack
-- Scalability: stack interconnect bandwidth may be limited
+- **Reliability**: if the master switch experiences a control plane fault, the whole stack usually experiences a fault
+- **Maintenance**: software upgrades usually require downtime for a full stack reboot
+- **Scalability**: there's usually a limit of 8-12 switches in a stack
+- **Scalability**: stack interconnect bandwidth may be limited
 
 ### EVPN-VXLAN
 
 **Pros**
 
-- Reliability: switch control processes are completely separate -- each participating device can stand alone
-- Maintenance: software upgrades can be rolled out one switch at a time without impacting other devices
-- Scalability: can scale to many switches if necessary
-- Scalability: interconnect bandwidth can be increased when necessary
-- Convenience: multi-chassis link aggregation via ESI-LAG is relatively simple and standards-based
-- Standardization: fully standards-based, supported by many manufacturers
+- **Reliability**: switch control processes are completely separate -- each participating device can stand alone
+- **Maintenance**: software upgrades can be rolled out one switch at a time without impacting other devices
+- **Scalability**: can scale to many switches if necessary
+- **Scalability**: interconnect bandwidth can be increased when necessary
+- **Convenience**: multi-chassis link aggregation via ESI-LAG is relatively simple and standards-based
+- **Standardization**: fully standards-based, supported by many manufacturers
 
 **Cons**
 
-- Convenience: no syncronization of configuration or state across participating devices 
-- Cost: licensing is often required 
+- **Convenience**: no syncronization of configuration or state across participating devices 
+- **Cost**: licensing is often required 
 
-
-
-<div style="padding-top: 75px" markdown>
-[Go Home :material-home:](/){ .md-button }
-</div>
