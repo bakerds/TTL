@@ -43,6 +43,7 @@ theme:
     - navigation.prune
     - content.code.copy
     - content.code.annotate
+    - content.tooltips
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
