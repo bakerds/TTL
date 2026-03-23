@@ -3,7 +3,7 @@ site_url: https://ttl.iu13.net/
 nav:
   - index.md
   - 'EVPN-VXLAN in the Collapsed Core':
-    - '2026/evpn-vxlqn/index.md'
+    - '2026/evpn-vxlan/index.md'
   - TTL2024:
     - '2024/index.md'
     - 'Making NPS Logs Useful with Graylog':
@@ -64,7 +64,7 @@ extra:
   social:
     - icon: fontawesome/brands/linkedin 
       link: https://www.linkedin.com/in/dsbaker1/
-copyright: "Copyright © 2024 Dan Baker"
+copyright: "Copyright © Dan Baker"
 markdown_extensions:
   - pymdownx.superfences:
       custom_fences:

@@ -6,8 +6,10 @@ hide:
 # Home
 
 ## [EVPN-VXLAN in the Collapsed Core](2026/evpn-vxlan/index.md)
-:clock10: (Part 1) Tuesday, May 5, 2026; 10:00 - 11:00 am, Room 104
-:clock10: (Part 2) Tuesday, May 5, 2026; 12:30 - 1:30 pm, Room 104
+
+:clock10: Part 1 — Tuesday, May 5, 2026; 10:00 - 11:00 am, Room 104
+
+:clock1230: Part 2 — Tuesday, May 5, 2026; 12:30 - 1:30 pm, Room 104
 
 ---
 
