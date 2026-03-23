@@ -1,17 +1,21 @@
-site_name: Tech Talk Live 2024
+site_name: Tech Talk Live
 site_url: https://ttl.iu13.net/
 nav:
   - index.md
-  - 'Making NPS Logs Useful with Graylog':
-    - 'graylog/index.md'
-    - 'graylog/100-prerequisites.md'
-    - 'graylog/200-nps.md'
-    - 'graylog/220-ingest.md'
-    - 'graylog/230-process.md'
-    - 'graylog/240-aggregate.md'
-    - 'graylog/300-conclusion.md'
-  - 'Internet Exchange Peering':
-    - 'peering/index.md'
+  - 'EVPN-VXLAN in the Collapsed Core':
+    - '2026/evpn-vxlqn/index.md'
+  - TTL2024:
+    - '2024/index.md'
+    - 'Making NPS Logs Useful with Graylog':
+      - '2024/graylog/index.md'
+      - '2024/graylog/100-prerequisites.md'
+      - '2024/graylog/200-nps.md'
+      - '2024/graylog/220-ingest.md'
+      - '2024/graylog/230-process.md'
+      - '2024/graylog/240-aggregate.md'
+      - '2024/graylog/300-conclusion.md'
+    - 'Internet Exchange Peering':
+      - '2024/peering/index.md'
   - TTL2023:
     - '2023/index.md'
     - 'Introduction to IPv6':
